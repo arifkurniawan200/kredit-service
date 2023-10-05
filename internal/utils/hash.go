@@ -3,8 +3,6 @@ package utils
 import "golang.org/x/crypto/bcrypt"
 
 func HashPassword(password string) (string, error) {
-	// Generate a salt with a cost factor of 10
-	// Cost factor determines the computational cost of the hashing; higher values are slower but more secure
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	if err != nil {
 		return "", err

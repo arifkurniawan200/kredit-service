@@ -13,7 +13,7 @@ func (u handler) TenorList(c echo.Context) error {
 			Error:    err.Error(),
 		})
 	}
-	return c.JSON(http.StatusCreated, ResponseSuccess{
+	return c.JSON(http.StatusOK, ResponseSuccess{
 		Messages: "success fetch tenor list",
 		Data:     data,
 	})

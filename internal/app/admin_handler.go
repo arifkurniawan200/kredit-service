@@ -15,7 +15,7 @@ func (u handler) ListCostumerLoan(c echo.Context) error {
 			Error:    err.Error(),
 		})
 	}
-	return c.JSON(http.StatusCreated, ResponseSuccess{
+	return c.JSON(http.StatusOK, ResponseSuccess{
 		Messages: "success fetch loan request list",
 		Data:     data,
 	})
@@ -40,7 +40,7 @@ func (u handler) BulkApproveLoanRequest(c echo.Context) error {
 			Error:    err.Error(),
 		})
 	}
-	return c.JSON(http.StatusCreated, ResponseSuccess{
+	return c.JSON(http.StatusOK, ResponseSuccess{
 		Messages: "success fetch loan request list",
 		Data:     data,
 	})

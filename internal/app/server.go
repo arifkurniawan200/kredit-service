@@ -70,25 +70,7 @@ func Run(u usecase.UserUcase, t usecase.TransactionUcase) {
 		admin.PUT("/approve-loan", h.BulkApproveLoanRequest)
 		admin.GET("/list-loan", h.ListCostumerLoan)
 	}
-	//
-	//mobile := e.Group("/mobile")
-	//{
-	//	mobile.Use(JWTMiddleware("secret"))
-	//	mobile.GET("/products", handler.GetListProduct)
-	//	mobile.GET("/categories", handler.GetListCategories)
-	//	mobile.GET("/products/detail", handler.GetProductDetail)
-	//	mobile.POST("/cart", handler.AddToCart)
-	//	mobile.GET("/cart", handler.GetUserCarts)
-	//}
-	//
-	//admin := e.Group("/admin")
-	//{
-	//	admin.Use(JWTMiddleware("secret"))
-	//	admin.Use(AdminMiddleware)
-	//	admin.POST("/product", handler.AddProduct)
-	//	admin.PUT("/product", handler.UpdateProduct)
-	//}
-	//
+
 	var wg sync.WaitGroup
 
 	wg.Add(1)

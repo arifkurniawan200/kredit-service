@@ -12,6 +12,8 @@ type UserRepository interface {
 	RequestLoan(user models.CustomerLoan) error
 	GetUserLimit(userID int) (models.CustomerLoan, error)
 	CustomerLoanRequest(status string) ([]models.CustomerLoan, error)
+	CustomerLoanRequestByIds(ids []int, status string) ([]models.CustomerLoan, error)
+	UpdateLoanRequest(loan models.CustomerLoan) error
 }
 
 type TransactionRepository interface {

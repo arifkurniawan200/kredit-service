@@ -3,13 +3,68 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	models "kredit-service/internal/model"
+	"strings"
 )
 
 type UserHandler struct {
 	db *sql.DB
 }
 
+func (h UserHandler) UpdateLoanRequest(loan models.CustomerLoan) error {
+	_, err := h.db.Exec(queryApproveLoanRequest, loan.Status, loan.ApprovedDate, loan.ExpiredAt, loan.ID)
+	if err != nil {
+		return err
+	}
+	return err
+}
+
+func (h UserHandler) CustomerLoanRequestByIds(ids []int, status string) ([]models.CustomerLoan, error) {
+	var (
+		datas []models.CustomerLoan
+		err   error
+	)
+
+	if len(ids) == 0 {
+		return datas, nil
+	}
+
+	placeholders := make([]string, len(ids))
+	for i := range ids {
+		placeholders[i] = "?"
+	}
+	inClause := strings.Join(placeholders, ",")
+
+	query := fmt.Sprintf(queryGetListCustomerRequestByIds, inClause)
+
+	args := make([]interface{}, len(ids)+1)
+	args[0] = status
+	for i, id := range ids {
+		args[i+1] = id
+	}
+
+	rows, err := h.db.Query(query, args...)
+	if err != nil {
+		return datas, err
+	}
+	defer rows.Close()
+
+	// Iterate hasil query
+	for rows.Next() {
+		var data models.CustomerLoan
+		if err = rows.Scan(&data.ID, &data.CustomerID, &data.Status, &data.UsedAmount, &data.LoanAmount, &data.Tenor, &data.CreatedAt, &data.UpdatedAt, &data.LoanDate); err != nil {
+			return datas, err
+		}
+		datas = append(datas, data)
+	}
+
+	// Check for errors from iterating over rows
+	if err = rows.Err(); err != nil {
+		return datas, err
+	}
+	return datas, err
+}
 func NewUserRepository(db *sql.DB) UserRepository {
 	return &UserHandler{db}
 }
@@ -25,9 +80,6 @@ func (h UserHandler) CustomerLoanRequest(status string) ([]models.CustomerLoan, 
 		datas []models.CustomerLoan
 		err   error
 	)
-	if status != "" {
-
-	}
 	rows, err := h.db.Query(queryGetListCustomerRequest, status)
 	if err != nil {
 		return datas, err

@@ -11,6 +11,7 @@ type UserUcase interface {
 	GetUserLimit(ctx echo.Context, userID int) (models.LimitInformation, error)
 	RequestLoan(ctx echo.Context, loan models.LoanRequestParam) error
 	ListRequestLoan(ctx echo.Context) ([]models.CustomerLoan, error)
+	BulkApproveLoanRequest(ctx echo.Context, ids []int) (res []int, err error)
 }
 
 type TransactionUcase interface {

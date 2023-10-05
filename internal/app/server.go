@@ -66,7 +66,7 @@ func Run(u usecase.UserUcase, t usecase.TransactionUcase) {
 	{
 		admin.Use(JWTMiddleware("secret"))
 		//admin.Use(AdminMiddleware)
-		admin.PUT("/approve-loan", h.TenorList)
+		admin.PUT("/approve-loan", h.BulkApproveLoanRequest)
 		admin.GET("/list-loan", h.ListCostumerLoan)
 	}
 	//

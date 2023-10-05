@@ -56,4 +56,29 @@ const (
         WHERE
             status = ? ORDER BY created_at desc 
     `
+	queryGetListCustomerRequestByIds = `
+        SELECT
+            id,
+            customer_id,
+            status,
+            loan_amount,
+            used_amount,
+            tenor,
+            created_at,
+            updated_at,
+            loan_date
+        FROM
+            customer_loan
+        WHERE
+            status = ? AND id IN (%s)
+    `
+	queryApproveLoanRequest = `
+			UPDATE customer_loan
+			SET
+			  status = ?,
+			  approved_date = ?,
+			  expired_at = ?
+			WHERE
+			  id = ?
+`
 )

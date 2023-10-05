@@ -16,6 +16,31 @@ type UserHandler struct {
 	t repository.TransactionRepository
 }
 
+func (u UserHandler) BulkApproveLoanRequest(ctx echo.Context, ids []int) (res []int, err error) {
+	var (
+		success []int
+	)
+	datas, err := u.u.CustomerLoanRequestByIds(ids, consts.LoanRequestStatusRequested)
+	if err != nil {
+		return nil, err
+	}
+	for _, d := range datas {
+		now := time.Now()
+		expired := now.AddDate(0, d.Tenor, 0)
+		err = u.u.UpdateLoanRequest(models.CustomerLoan{
+			Status:       consts.LoanRequestStatusApproved,
+			ApprovedDate: &now,
+			ExpiredAt:    &expired,
+			ID:           d.ID,
+		})
+		if err != nil {
+			return nil, err
+		}
+		success = append(success, d.ID)
+	}
+	return success, nil
+}
+
 func (u UserHandler) ListRequestLoan(ctx echo.Context) ([]models.CustomerLoan, error) {
 	return u.u.CustomerLoanRequest(consts.LoanRequestStatusRequested)
 }

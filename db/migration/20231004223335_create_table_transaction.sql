@@ -9,7 +9,7 @@ CREATE TABLE transaction (
      total_installment INT NOT NULL,
      interest FLOAT NOT NULL,
      asset_name VARCHAR(255) NOT NULL,
-     status ENUM('Pending', 'Approved', 'Rejected', 'Paid') NOT NULL,
+     status ENUM('Success', 'Failed') NOT NULL,
      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
      deleted_at TIMESTAMP DEFAULT NULL,

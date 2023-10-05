@@ -9,6 +9,27 @@ type TransactionHandler struct {
 	db *sql.DB
 }
 
+func (h TransactionHandler) CreateSchedulePaymentTx(tx *sql.Tx, data models.SchedulePayment) error {
+	_, err := tx.Exec(queryCreateSchedulePayment, data.TransactionID, data.Amount, data.Status, data.DueDate)
+	if err != nil {
+		return err
+	}
+	return err
+}
+
+// customer_id, contract_number, OTR, admin_fee, total_installment, interest, asset_name, status
+func (h TransactionHandler) CreateTransactionTx(tx *sql.Tx, data models.TransactionParam) (int, error) {
+	result, err := tx.Exec(queryCreateTransaction, data.UserID, data.ContractNumber, data.OTR, data.AdminFee, data.TotalInstallment, data.Interest, data.AssetName, data.Status)
+	if err != nil {
+		return 0, err
+	}
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+	return int(id), err
+}
+
 func (h TransactionHandler) GetTenorByID(id int) (models.Tenor, error) {
 	var (
 		data models.Tenor

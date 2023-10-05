@@ -20,6 +20,14 @@ func (h UserHandler) UpdateLoanRequest(loan models.CustomerLoan) error {
 	return err
 }
 
+func (h UserHandler) UpdateLoanRequestTx(tx *sql.Tx, loan models.CustomerLoan) error {
+	_, err := tx.Exec(queryUseLimitRequest, loan.Status, loan.UsedAmount, loan.ID)
+	if err != nil {
+		return err
+	}
+	return err
+}
+
 func (h UserHandler) CustomerLoanRequestByIds(ids []int, status string) ([]models.CustomerLoan, error) {
 	var (
 		datas []models.CustomerLoan

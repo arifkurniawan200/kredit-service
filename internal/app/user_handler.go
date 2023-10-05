@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
@@ -151,7 +150,7 @@ func (u handler) RequestLoan(c echo.Context) error {
 	}
 	loan.CustomerID = int(userID)
 	loan.Email = email
-	fmt.Println(loan)
+
 	err := u.User.RequestLoan(c, *loan)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, ResponseFailed{
@@ -161,5 +160,51 @@ func (u handler) RequestLoan(c echo.Context) error {
 	}
 	return c.JSON(http.StatusCreated, ResponseSuccess{
 		Messages: "success request loan, please wait for approval",
+	})
+}
+
+func (u handler) CreateTransaction(c echo.Context) error {
+	transaction := new(models.TransactionParam)
+	if err := c.Bind(transaction); err != nil {
+		return c.JSON(http.StatusInternalServerError, ResponseFailed{
+			Messages: "failed to register user",
+			Error:    err.Error(),
+		})
+	}
+
+	validator := validator.New()
+
+	if err := validator.Struct(transaction); err != nil {
+		return c.JSON(http.StatusBadRequest, ResponseFailed{
+			Messages: "invalid payload",
+			Error:    err.Error()})
+	}
+
+	// get user id from token
+	claims, ok := c.Get("claims").(jwt.MapClaims)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
+			"message": "Invalid or missing claims",
+		})
+	}
+
+	userID, ok := claims["id"].(float64)
+	if !ok {
+		return c.JSON(http.StatusInternalServerError, ResponseFailed{
+			Messages: "failed to get user id",
+		})
+	}
+
+	transaction.UserID = int(userID)
+
+	err := u.Transaction.CreateTransaction(c, *transaction)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, ResponseFailed{
+			Messages: "failed to connect database",
+			Error:    err.Error(),
+		})
+	}
+	return c.JSON(http.StatusCreated, ResponseSuccess{
+		Messages: "success doing transaction",
 	})
 }

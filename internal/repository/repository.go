@@ -14,10 +14,13 @@ type UserRepository interface {
 	CustomerLoanRequest(status string) ([]models.CustomerLoan, error)
 	CustomerLoanRequestByIds(ids []int, status string) ([]models.CustomerLoan, error)
 	UpdateLoanRequest(loan models.CustomerLoan) error
+	UpdateLoanRequestTx(tx *sql.Tx, loan models.CustomerLoan) error
 }
 
 type TransactionRepository interface {
 	GetUserTransactionByUserID(userID int) ([]models.Transaction, error)
 	GetTenorList() ([]models.Tenor, error)
 	GetTenorByID(id int) (models.Tenor, error)
+	CreateTransactionTx(tx *sql.Tx, data models.TransactionParam) (int, error)
+	CreateSchedulePaymentTx(tx *sql.Tx, data models.SchedulePayment) error
 }

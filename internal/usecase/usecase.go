@@ -16,4 +16,5 @@ type UserUcase interface {
 
 type TransactionUcase interface {
 	GetTenorList() ([]models.Tenor, error)
+	CreateTransaction(ctx echo.Context, transaction models.TransactionParam) error
 }

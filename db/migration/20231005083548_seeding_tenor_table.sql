@@ -1,6 +1,6 @@
 -- +goose Up
 -- +goose StatementBegin
-INSERT INTO tenor (tenor, value) VALUES (1, 0.3),(2,0.5),(3,0.6),(6,0.9);
+INSERT INTO tenor (tenor, value) VALUES (1, 1.0),(2,1.5),(3,1.8),(6,2.5);
 -- +goose StatementEnd
 
 -- +goose Down

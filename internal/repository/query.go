@@ -81,4 +81,17 @@ const (
 			WHERE
 			  id = ?
 `
+	queryUseLimitRequest = `
+			UPDATE customer_loan
+			SET
+			  status = ?,
+			  used_amount = ?
+			WHERE
+			  id = ?`
+
+	queryCreateTransaction = `INSERT INTO transaction (customer_id, contract_number, OTR, admin_fee, total_installment, interest, asset_name, status)
+							VALUES (?, ?, ?, ?, ?, ?, ?, ?);`
+
+	queryCreateSchedulePayment = `INSERT INTO schedule_payment (transaction_id, amount, status, due_date)
+								VALUES(?,?,?,?)`
 )

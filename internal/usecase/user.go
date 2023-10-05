@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"golang.org/x/sync/errgroup"
@@ -74,6 +75,9 @@ func (u UserHandler) GetUserLimit(ctx echo.Context, userID int) (models.LimitInf
 	limit, err := u.u.GetUserLimit(userID)
 	if err != nil {
 		return models.LimitInformation{}, err
+	}
+	if limit.ID == 0 {
+		return models.LimitInformation{}, fmt.Errorf("you don't have a loan limit yet. Please apply for a loan")
 	}
 	return LoanToLimitInfo(limit), nil
 }

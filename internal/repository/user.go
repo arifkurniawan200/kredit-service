@@ -34,7 +34,8 @@ func (h UserHandler) GetUserByEmail(email string) (models.Customer, error) {
 	// Iterate hasil query
 	for rows.Next() {
 		if err = rows.Scan(&data.ID, &data.NIK, &data.FullName, &data.LegalName, &data.BornPlace, &data.BornDate, &data.Salary, &data.IsAdmin,
-			&data.Email, &data.Password, &data.FotoSelfie, &data.FotoKTP, &data.CreatedAt, &data.UpdatedAt, &data.DeletedAt,
+			&data.Email, &data.Password, &data.FotoSelfie, &data.FotoKTP,
+			&data.CreatedAt, &data.UpdatedAt, &data.DeletedAt,
 		); err != nil {
 			return data, err
 		}

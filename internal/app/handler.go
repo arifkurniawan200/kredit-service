@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
@@ -42,16 +43,17 @@ func (u Handler) RegisterUser(c echo.Context) error {
 }
 
 func (u Handler) LoginUser(c echo.Context) error {
-	username := c.FormValue("username")
+	email := c.FormValue("email")
 	password := c.FormValue("password")
 
-	userInfo, err := u.User.GetUserInfoByEmail(c, username)
+	userInfo, err := u.User.GetUserInfoByEmail(c, email)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, ResponseFailed{
 			Messages: "failed to login",
 			Error:    err.Error(),
 		})
 	}
+	fmt.Println(userInfo)
 	if !utils.VerifyPassword(password, userInfo.Password) {
 		return c.JSON(http.StatusInternalServerError, ResponseFailed{
 			Messages: "invalid username/password",

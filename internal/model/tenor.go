@@ -6,8 +6,8 @@ import "time"
 type Tenor struct {
 	ID        int        `json:"id"`
 	Tenor     int        `json:"tenor"`
-	Value     int        `json:"value"`
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt time.Time  `json:"updated_at"`
+	Value     float64    `json:"value"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 }

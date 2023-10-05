@@ -13,7 +13,7 @@ var (
 )
 
 func NewDatabase(cfg config.Database) (*sql.DB, error) {
-	dbURL := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", cfg.Username, cfg.Password, cfg.Host, cfg.Port, cfg.Name)
+	dbURL := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true", cfg.Username, cfg.Password, cfg.Host, cfg.Port, cfg.Name)
 	db, err = sql.Open("mysql", dbURL)
 	if err != nil {
 		return nil, err

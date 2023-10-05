@@ -40,4 +40,20 @@ const (
             expired_at
         FROM
             customer_loan WHERE customer_id=?`
+	queryGetListCustomerRequest = `
+        SELECT
+            id,
+            customer_id,
+            status,
+            loan_amount,
+            used_amount,
+            tenor,
+            created_at,
+            updated_at,
+            loan_date
+        FROM
+            customer_loan
+        WHERE
+            status = ? ORDER BY created_at desc 
+    `
 )

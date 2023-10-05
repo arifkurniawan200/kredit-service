@@ -7,18 +7,18 @@ import (
 
 // CustomerLoan adalah model struct untuk tabel customer_loan
 type CustomerLoan struct {
-	ID           int            `json:"id"`
-	CustomerID   int            `json:"customer_id"`
-	Status       string         `json:"status"`
-	LoanDate     time.Time      `json:"loan_date"`
-	LoanAmount   float64        `json:"loan_amount"`
-	UsedAmount   float64        `json:"used_amount"`
-	ApprovedDate *time.Time     `json:"approved_date"`
-	Tenor        int            `json:"tenor"`
-	ExpiredAt    mysql.NullTime `json:"expired_at"`
-	CreatedAt    time.Time      `json:"created_at"`
-	UpdatedAt    time.Time      `json:"updated_at"`
-	DeletedAt    *time.Time     `json:"deleted_at"`
+	ID           int        `json:"id"`
+	CustomerID   int        `json:"customer_id"`
+	Status       string     `json:"status"`
+	LoanDate     time.Time  `json:"loan_date,omitempty"`
+	LoanAmount   float64    `json:"loan_amount"`
+	UsedAmount   float64    `json:"used_amount"`
+	ApprovedDate *time.Time `json:"approved_date,omitempty"`
+	Tenor        int        `json:"tenor"`
+	ExpiredAt    *time.Time `json:"expired_at,omitempty"`
+	CreatedAt    time.Time  `json:"created_at"`
+	UpdatedAt    time.Time  `json:"updated_at"`
+	DeletedAt    *time.Time `json:"deleted_at,omitempty"`
 }
 
 type LoanRequestParam struct {
@@ -28,12 +28,12 @@ type LoanRequestParam struct {
 }
 
 type LimitInformation struct {
-	AvailableAmount float64        `json:"available_amount"`
-	UsedAmount      float64        `json:"used_amount"`
-	LoanAmount      float64        `json:"loan_amount"`
-	Info            string         `json:"info"`
-	IsActive        bool           `json:"is_active"`
-	ExpiredDate     mysql.NullTime `json:"expired_date,omitempty"`
+	AvailableAmount float64    `json:"available_amount"`
+	UsedAmount      float64    `json:"used_amount"`
+	LoanAmount      float64    `json:"loan_amount"`
+	Info            string     `json:"info"`
+	IsActive        bool       `json:"is_active"`
+	ExpiredDate     *time.Time `json:"expired_date,omitempty"`
 }
 
 // Customer adalah model struct untuk tabel customer

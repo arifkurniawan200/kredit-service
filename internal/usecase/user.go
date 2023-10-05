@@ -16,6 +16,10 @@ type UserHandler struct {
 	t repository.TransactionRepository
 }
 
+func (u UserHandler) ListRequestLoan(ctx echo.Context) ([]models.CustomerLoan, error) {
+	return u.u.CustomerLoanRequest(consts.LoanRequestStatusRequested)
+}
+
 func (u UserHandler) RequestLoan(ctx echo.Context, loan models.LoanRequestParam) error {
 	now := time.Now()
 	tenor, err := u.t.GetTenorByID(loan.TenorID)

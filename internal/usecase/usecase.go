@@ -10,6 +10,7 @@ type UserUcase interface {
 	GetUserInfoByEmail(ctx echo.Context, email string) (models.Customer, error)
 	GetUserLimit(ctx echo.Context, userID int) (models.LimitInformation, error)
 	RequestLoan(ctx echo.Context, loan models.LoanRequestParam) error
+	ListRequestLoan(ctx echo.Context) ([]models.CustomerLoan, error)
 }
 
 type TransactionUcase interface {

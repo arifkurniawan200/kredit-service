@@ -10,6 +10,46 @@ type UserHandler struct {
 	db *sql.DB
 }
 
+func NewUserRepository(db *sql.DB) UserRepository {
+	return &UserHandler{db}
+}
+
+func (h UserHandler) BeginTx() (*sql.Tx, error) {
+	return h.db.BeginTx(context.Background(), &sql.TxOptions{
+		Isolation: sql.LevelSerializable,
+	})
+}
+
+func (h UserHandler) CustomerLoanRequest(status string) ([]models.CustomerLoan, error) {
+	var (
+		datas []models.CustomerLoan
+		err   error
+	)
+	if status != "" {
+
+	}
+	rows, err := h.db.Query(queryGetListCustomerRequest, status)
+	if err != nil {
+		return datas, err
+	}
+	defer rows.Close()
+
+	// Iterate hasil query
+	for rows.Next() {
+		var data models.CustomerLoan
+		if err = rows.Scan(&data.ID, &data.CustomerID, &data.Status, &data.UsedAmount, &data.LoanAmount, &data.Tenor, &data.CreatedAt, &data.UpdatedAt, &data.LoanDate); err != nil {
+			return datas, err
+		}
+		datas = append(datas, data)
+	}
+
+	// Check for errors from iterating over rows
+	if err = rows.Err(); err != nil {
+		return datas, err
+	}
+	return datas, err
+}
+
 func (h UserHandler) GetUserLimit(userID int) (models.CustomerLoan, error) {
 	var (
 		data models.CustomerLoan
@@ -77,14 +117,4 @@ func (h UserHandler) GetUserByEmail(email string) (models.Customer, error) {
 		return data, err
 	}
 	return data, err
-}
-
-func (h UserHandler) BeginTx() (*sql.Tx, error) {
-	return h.db.BeginTx(context.Background(), &sql.TxOptions{
-		Isolation: sql.LevelSerializable,
-	})
-}
-
-func NewUserRepository(db *sql.DB) UserRepository {
-	return &UserHandler{db}
 }

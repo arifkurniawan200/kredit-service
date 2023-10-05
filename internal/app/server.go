@@ -62,6 +62,13 @@ func Run(u usecase.UserUcase, t usecase.TransactionUcase) {
 		customer.GET("/limit", h.UserLimit)
 		customer.POST("/request-loan", h.RequestLoan)
 	}
+	admin := e.Group("/admin")
+	{
+		admin.Use(JWTMiddleware("secret"))
+		//admin.Use(AdminMiddleware)
+		admin.PUT("/approve-loan", h.TenorList)
+		admin.GET("/list-loan", h.ListCostumerLoan)
+	}
 	//
 	//mobile := e.Group("/mobile")
 	//{

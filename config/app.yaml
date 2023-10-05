@@ -2,8 +2,8 @@ db:
   host: localhost
   port: 3306
   name: kredit_system
-  username: root
-  password:
+  username: admin
+  password: Password123#@!
   active_pool: true
   max_pool: 30
   min_pool: 5

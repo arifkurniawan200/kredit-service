@@ -1,1 +1,7 @@
-package kredit_service
+package main
+
+import "kredit-service/cmd"
+
+func main() {
+	cmd.Start()
+}

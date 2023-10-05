@@ -7,6 +7,7 @@ import (
 	"kredit-service/db"
 	"kredit-service/internal/app"
 	"kredit-service/internal/repository"
+	"kredit-service/internal/usecase"
 	"log"
 )
 
@@ -44,8 +45,9 @@ func Start() {
 				}
 
 				userRepo := repository.NewUserRepository(db)
-				productRepo := repository.NewProductRepository(db)
-				app.Run(userRepo, productRepo)
+				_ = repository.NewTransactionRepository(db)
+				userUsecase := usecase.NewUserUsecase(userRepo)
+				app.Run(userUsecase)
 			},
 		},
 	}

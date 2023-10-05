@@ -2,7 +2,7 @@
 -- +goose StatementBegin
 CREATE TABLE transaction (
      id INT AUTO_INCREMENT PRIMARY KEY,
-     user_id INT NOT NULL,
+     customer_id INT NOT NULL,
      contract_number VARCHAR(255) UNIQUE NOT NULL,
      OTR INT NOT NULL,
      admin_fee FLOAT NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE transaction (
      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
      deleted_at TIMESTAMP DEFAULT NULL,
-     FOREIGN KEY (user_id) REFERENCES user(id)
+     FOREIGN KEY (customer_id) REFERENCES customer(id)
 );
 -- +goose StatementEnd
 

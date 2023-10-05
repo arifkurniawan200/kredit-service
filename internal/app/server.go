@@ -3,22 +3,21 @@ package app
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"kredit-service/internal/repository"
+	"kredit-service/internal/usecase"
 	"net/http"
 	"time"
 )
 
 type Handler struct {
-	User    repository.User
-	Product repository.Product
+	User usecase.UserUcase
+	//Transaction repository.TransactionRepository
 }
 
-func Run(u repository.User, p repository.Product) {
+func Run(u usecase.UserUcase) {
 	e := echo.New()
 
 	handler := Handler{
-		User:    u,
-		Product: p,
+		User: u,
 	}
 
 	// Middleware
@@ -50,8 +49,8 @@ func Run(u repository.User, p repository.Product) {
 		},
 	}
 	e.Use(middleware.RateLimiterWithConfig(config))
-	//e.POST("/register", handler.RegisterUser)
-	//e.POST("/login", handler.LoginUser)
+	e.POST("/register", handler.RegisterUser)
+	e.POST("/login", handler.LoginUser)
 	//
 	//mobile := e.Group("/mobile")
 	//{
@@ -71,5 +70,5 @@ func Run(u repository.User, p repository.Product) {
 	//	admin.PUT("/product", handler.UpdateProduct)
 	//}
 	//
-	//e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(":8080"))
 }

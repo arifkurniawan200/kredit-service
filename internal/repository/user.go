@@ -10,8 +10,39 @@ type UserHandler struct {
 	db *sql.DB
 }
 
-// `INSERT INTO customer (NIK, full_name, legal_name, born_place, born_date, salary, is_admin, email, password, foto_selfie, foto_ktp)
-// VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);`
+func (h UserHandler) GetUserLimit(userID int) (models.CustomerLoan, error) {
+	var (
+		data models.CustomerLoan
+		err  error
+	)
+	rows, err := h.db.Query(queryGetUserLimit, userID)
+	if err != nil {
+		return data, err
+	}
+	defer rows.Close()
+
+	// Iterate hasil query
+	for rows.Next() {
+		if err = rows.Scan(&data.ID, &data.CustomerID, &data.Status, &data.UsedAmount, &data.LoanAmount, &data.Tenor, &data.ExpiredAt); err != nil {
+			return data, err
+		}
+	}
+
+	// Check for errors from iterating over rows
+	if err = rows.Err(); err != nil {
+		return data, err
+	}
+	return data, err
+}
+
+func (h UserHandler) RequestLoan(cl models.CustomerLoan) error {
+	_, err := h.db.Exec(queryRequestLoan, cl.CustomerID, cl.Tenor, cl.LoanDate, cl.LoanAmount, cl.Status)
+	if err != nil {
+		return err
+	}
+	return err
+}
+
 func (h UserHandler) RegisterUser(c models.CustomerParam) error {
 	_, err := h.db.Exec(insertNewCostumer, c.NIK, c.FullName, c.LegalName, c.BornPlace, c.BornDate, c.Salary, false, c.Email, c.Password, c.FotoSelfie, c.FotoKTP)
 	if err != nil {

@@ -4,13 +4,53 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"golang.org/x/sync/errgroup"
+	"kredit-service/internal/consts"
 	models "kredit-service/internal/model"
 	"kredit-service/internal/repository"
 	"kredit-service/internal/utils"
+	"time"
 )
 
 type UserHandler struct {
 	u repository.UserRepository
+	t repository.TransactionRepository
+}
+
+func (u UserHandler) RequestLoan(ctx echo.Context, loan models.LoanRequestParam) error {
+	now := time.Now()
+	tenor, err := u.t.GetTenorByID(loan.TenorID)
+	if err != nil {
+		return err
+	}
+
+	userInfo, err := u.u.GetUserByEmail(loan.Email)
+	if err != nil {
+		return err
+	}
+
+	err = u.u.RequestLoan(models.CustomerLoan{
+		CustomerID: loan.CustomerID,
+		Tenor:      loan.TenorID,
+		LoanDate:   now,
+		LoanAmount: tenor.Value * userInfo.Salary,
+		Status:     consts.LoanRequestStatusRequested,
+	})
+	if err != nil {
+		return err
+	}
+	return err
+}
+
+func (u UserHandler) GetUserLimit(ctx echo.Context, userID int) (models.LimitInformation, error) {
+	limit, err := u.u.GetUserLimit(userID)
+	if err != nil {
+		return models.LimitInformation{}, err
+	}
+	return LoanToLimitInfo(limit), nil
+}
+
+func NewUserUsecase(u repository.UserRepository, t repository.TransactionRepository) UserUcase {
+	return &UserHandler{u, t}
 }
 
 func (u UserHandler) GetUserInfoByEmail(ctx echo.Context, email string) (models.Customer, error) {
@@ -75,8 +115,4 @@ func (u UserHandler) RegisterCustomer(ctx echo.Context, c models.CustomerParam) 
 	}
 
 	return nil
-}
-
-func NewUserUsecase(u repository.UserRepository) UserUcase {
-	return &UserHandler{u}
 }

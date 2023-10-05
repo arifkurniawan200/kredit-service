@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func (u Handler) RegisterUser(c echo.Context) error {
+func (u handler) RegisterUser(c echo.Context) error {
 	customer := new(models.CustomerParam)
 	if err := c.Bind(customer); err != nil {
 		return c.JSON(http.StatusInternalServerError, ResponseFailed{
@@ -42,7 +42,7 @@ func (u Handler) RegisterUser(c echo.Context) error {
 	})
 }
 
-func (u Handler) LoginUser(c echo.Context) error {
+func (u handler) LoginUser(c echo.Context) error {
 	email := c.FormValue("email")
 	password := c.FormValue("password")
 
@@ -53,7 +53,7 @@ func (u Handler) LoginUser(c echo.Context) error {
 			Error:    err.Error(),
 		})
 	}
-	fmt.Println(userInfo)
+
 	if !utils.VerifyPassword(password, userInfo.Password) {
 		return c.JSON(http.StatusInternalServerError, ResponseFailed{
 			Messages: "invalid username/password",
@@ -80,5 +80,86 @@ func (u Handler) LoginUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "success login",
 		"token":   accessToken,
+	})
+}
+
+func (u handler) UserLimit(c echo.Context) error {
+	// get user id from token
+	claims, ok := c.Get("claims").(jwt.MapClaims)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
+			"message": "Invalid or missing claims",
+		})
+	}
+
+	userID, ok := claims["id"].(float64)
+	if !ok {
+		return c.JSON(http.StatusInternalServerError, ResponseFailed{
+			Messages: "failed to get user id",
+		})
+	}
+	data, err := u.User.GetUserLimit(c, int(userID))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, ResponseFailed{
+			Messages: "failed to connect database",
+			Error:    err.Error(),
+		})
+	}
+	return c.JSON(http.StatusCreated, ResponseSuccess{
+		Messages: "success fetch user limit",
+		Data:     data,
+	})
+}
+
+func (u handler) RequestLoan(c echo.Context) error {
+	loan := new(models.LoanRequestParam)
+	if err := c.Bind(loan); err != nil {
+		return c.JSON(http.StatusInternalServerError, ResponseFailed{
+			Messages: "failed to register user",
+			Error:    err.Error(),
+		})
+	}
+
+	validator := validator.New()
+	// Validasi struktur data customer
+	if err := validator.Struct(loan); err != nil {
+		return c.JSON(http.StatusBadRequest, ResponseFailed{
+			Messages: "invalid payload",
+			Error:    err.Error()})
+	}
+
+	// get user id from token
+	claims, ok := c.Get("claims").(jwt.MapClaims)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
+			"message": "Invalid or missing claims",
+		})
+	}
+
+	userID, ok := claims["id"].(float64)
+	if !ok {
+		return c.JSON(http.StatusInternalServerError, ResponseFailed{
+			Messages: "failed to get user id",
+		})
+	}
+
+	email, ok := claims["email"].(string)
+	if !ok {
+		return c.JSON(http.StatusInternalServerError, ResponseFailed{
+			Messages: "failed to get user id",
+		})
+	}
+	loan.CustomerID = int(userID)
+	loan.Email = email
+	fmt.Println(loan)
+	err := u.User.RequestLoan(c, *loan)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, ResponseFailed{
+			Messages: "failed to connect database",
+			Error:    err.Error(),
+		})
+	}
+	return c.JSON(http.StatusCreated, ResponseSuccess{
+		Messages: "success request loan, please wait for approval",
 	})
 }

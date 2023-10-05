@@ -45,9 +45,10 @@ func Start() {
 				}
 
 				userRepo := repository.NewUserRepository(db)
-				_ = repository.NewTransactionRepository(db)
-				userUsecase := usecase.NewUserUsecase(userRepo)
-				app.Run(userUsecase)
+				transactionRepo := repository.NewTransactionRepository(db)
+				userUsecase := usecase.NewUserUsecase(userRepo, transactionRepo)
+				transactionUcase := usecase.NewTransactionsUsecase(transactionRepo)
+				app.Run(userUsecase, transactionUcase)
 			},
 		},
 	}

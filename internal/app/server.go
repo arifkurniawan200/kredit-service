@@ -1,23 +1,26 @@
 package app
 
 import (
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"kredit-service/internal/usecase"
 	"net/http"
+	"sync"
 	"time"
 )
 
-type Handler struct {
-	User usecase.UserUcase
-	//Transaction repository.TransactionRepository
+type handler struct {
+	User        usecase.UserUcase
+	Transaction usecase.TransactionUcase
 }
 
-func Run(u usecase.UserUcase) {
+func Run(u usecase.UserUcase, t usecase.TransactionUcase) {
 	e := echo.New()
 
-	handler := Handler{
-		User: u,
+	h := handler{
+		User:        u,
+		Transaction: t,
 	}
 
 	// Middleware
@@ -49,8 +52,16 @@ func Run(u usecase.UserUcase) {
 		},
 	}
 	e.Use(middleware.RateLimiterWithConfig(config))
-	e.POST("/register", handler.RegisterUser)
-	e.POST("/login", handler.LoginUser)
+	e.POST("/register", h.RegisterUser)
+	e.POST("/login", h.LoginUser)
+
+	customer := e.Group("/customer")
+	{
+		customer.Use(JWTMiddleware("secret"))
+		customer.GET("/tenor", h.TenorList)
+		customer.GET("/limit", h.UserLimit)
+		customer.POST("/request-loan", h.RequestLoan)
+	}
 	//
 	//mobile := e.Group("/mobile")
 	//{
@@ -70,5 +81,16 @@ func Run(u usecase.UserUcase) {
 	//	admin.PUT("/product", handler.UpdateProduct)
 	//}
 	//
-	e.Logger.Fatal(e.Start(":8080"))
+	var wg sync.WaitGroup
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+
+		if err := e.Start(":8080"); err != nil {
+			fmt.Printf("Error starting server: %v\n", err)
+		}
+	}()
+
+	wg.Wait()
 }

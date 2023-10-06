@@ -11,7 +11,7 @@ func (u handler) ListCostumerLoan(c echo.Context) error {
 	data, err := u.User.ListRequestLoan(c)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, ResponseFailed{
-			Messages: "failed to connect database",
+			Messages: "failed to get list loan request",
 			Error:    err.Error(),
 		})
 	}
@@ -36,12 +36,12 @@ func (u handler) BulkApproveLoanRequest(c echo.Context) error {
 	data, err := u.User.BulkApproveLoanRequest(c, idInts)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, ResponseFailed{
-			Messages: "failed to connect database",
+			Messages: "failed to  bulk approval",
 			Error:    err.Error(),
 		})
 	}
 	return c.JSON(http.StatusOK, ResponseSuccess{
-		Messages: "success fetch loan request list",
+		Messages: "success bulk approval",
 		Data:     data,
 	})
 }

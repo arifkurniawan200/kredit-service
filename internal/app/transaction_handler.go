@@ -26,7 +26,7 @@ func (u handler) TenorList(c echo.Context) error {
 	data, err := u.Transaction.GetTenorList(c, email)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, ResponseFailed{
-			Messages: "failed to connect database",
+			Messages: "failed to get tenor list",
 			Error:    err.Error(),
 		})
 	}
@@ -54,7 +54,7 @@ func (u handler) SchedulePayment(c echo.Context) error {
 	data, err := u.Transaction.GetUserSchedulePayment(c, int(userID))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, ResponseFailed{
-			Messages: "failed to connect database",
+			Messages: "failed to get schedule payment",
 			Error:    err.Error(),
 		})
 	}
@@ -101,11 +101,11 @@ func (u handler) PayTransaction(c echo.Context) error {
 	err := u.Transaction.PayTransaction(c, *transaction)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, ResponseFailed{
-			Messages: "failed to connect database",
+			Messages: "failed to pay transaction",
 			Error:    err.Error(),
 		})
 	}
-	return c.JSON(http.StatusCreated, ResponseSuccess{
+	return c.JSON(http.StatusOK, ResponseSuccess{
 		Messages: "success pay transaction",
 	})
 }
@@ -147,7 +147,7 @@ func (u handler) CreateTransaction(c echo.Context) error {
 	err := u.Transaction.CreateTransaction(c, *transaction)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, ResponseFailed{
-			Messages: "failed to connect database",
+			Messages: "failed to create transaction",
 			Error:    err.Error(),
 		})
 	}

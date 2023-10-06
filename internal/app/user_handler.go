@@ -164,11 +164,11 @@ func (u handler) UserLimit(c echo.Context) error {
 	data, err := u.User.GetUserLimit(c, int(userID))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, ResponseFailed{
-			Messages: "failed to connect database",
+			Messages: "failed to get user limit",
 			Error:    err.Error(),
 		})
 	}
-	return c.JSON(http.StatusCreated, ResponseSuccess{
+	return c.JSON(http.StatusOK, ResponseSuccess{
 		Messages: "success fetch user limit",
 		Data:     data,
 	})
@@ -192,7 +192,7 @@ func (u handler) GetCostumerProfile(c echo.Context) error {
 	data, err := u.User.GetUserInfoByEmail(c, email)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, ResponseFailed{
-			Messages: "failed to connect database",
+			Messages: "failed to get profile",
 			Error:    err.Error(),
 		})
 	}
@@ -237,7 +237,7 @@ func (u handler) RequestLoan(c echo.Context) error {
 	email, ok := claims["email"].(string)
 	if !ok {
 		return c.JSON(http.StatusInternalServerError, ResponseFailed{
-			Messages: "failed to get user id",
+			Messages: "failed to get user email",
 		})
 	}
 	loan.CustomerID = int(userID)
@@ -246,7 +246,7 @@ func (u handler) RequestLoan(c echo.Context) error {
 	err := u.User.RequestLoan(c, *loan)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, ResponseFailed{
-			Messages: "failed to connect database",
+			Messages: "failed to request loan",
 			Error:    err.Error(),
 		})
 	}

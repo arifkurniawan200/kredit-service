@@ -27,8 +27,7 @@ func (u handler) RegisterUser(c echo.Context) error {
 			Messages: "invalid payload",
 			Error:    err.Error()})
 	}
-	customer.FotoSelfie = "fads"
-	customer.FotoKTP = "da"
+
 	err := u.User.RegisterCustomer(c, *customer)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, ResponseFailed{
@@ -106,6 +105,34 @@ func (u handler) UserLimit(c echo.Context) error {
 	}
 	return c.JSON(http.StatusCreated, ResponseSuccess{
 		Messages: "success fetch user limit",
+		Data:     data,
+	})
+}
+
+func (u handler) GetCostumerProfile(c echo.Context) error {
+	// get user id from token
+	claims, ok := c.Get("claims").(jwt.MapClaims)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
+			"message": "Invalid or missing claims",
+		})
+	}
+
+	email, ok := claims["email"].(string)
+	if !ok {
+		return c.JSON(http.StatusInternalServerError, ResponseFailed{
+			Messages: "failed to get user id",
+		})
+	}
+	data, err := u.User.GetUserInfoByEmail(c, email)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, ResponseFailed{
+			Messages: "failed to connect database",
+			Error:    err.Error(),
+		})
+	}
+	return c.JSON(http.StatusOK, ResponseSuccess{
+		Messages: "success fetch user profile",
 		Data:     data,
 	})
 }

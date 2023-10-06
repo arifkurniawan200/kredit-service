@@ -17,5 +17,5 @@ CREATE TABLE schedule_payment (
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE transaction_payment;
+DROP TABLE schedule_payment;
 -- +goose StatementEnd

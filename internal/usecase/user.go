@@ -96,7 +96,43 @@ func (u UserHandler) GetUserLimit(ctx echo.Context, userID int) (models.LimitInf
 }
 
 func (u UserHandler) GetUserInfoByEmail(ctx echo.Context, email string) (models.Customer, error) {
-	return u.u.GetUserByEmail(email)
+	var (
+		err error
+		g   errgroup.Group
+	)
+	userInfo, err := u.u.GetUserByEmail(email)
+	if err != nil {
+		return models.Customer{}, err
+	}
+	g.Go(func() error {
+		userInfo.NIK, err = utils.Decrypt(userInfo.NIK, secret)
+		if err != nil {
+			log.Errorf("error when decrypt nik ")
+			return err
+		}
+		return err
+	})
+
+	g.Go(func() error {
+		userInfo.FotoKTP, err = utils.Decrypt(userInfo.FotoKTP, secret)
+		if err != nil {
+			log.Errorf("error when decrypt KTP ")
+			return err
+		}
+		return err
+	})
+	g.Go(func() error {
+		userInfo.FotoSelfie, err = utils.Decrypt(userInfo.FotoSelfie, secret)
+		if err != nil {
+			log.Errorf("error when decrypt Selfie ")
+			return err
+		}
+		return err
+	})
+	if err = g.Wait(); err != nil {
+		return userInfo, err
+	}
+	return userInfo, err
 }
 
 func (u UserHandler) RegisterCustomer(ctx echo.Context, c models.CustomerParam) error {
@@ -119,25 +155,7 @@ func (u UserHandler) RegisterCustomer(ctx echo.Context, c models.CustomerParam) 
 		//encrypt sensitive data
 		c.NIK, err = utils.Encrypt(c.NIK, secret)
 		if err != nil {
-			log.Errorf("error when hash password ")
-			return err
-		}
-		return err
-	})
-
-	g.Go(func() error {
-		c.FotoKTP, err = utils.Encrypt(c.FotoKTP, secret)
-		if err != nil {
-			log.Errorf("error when hash password ")
-			return err
-		}
-		return err
-	})
-
-	g.Go(func() error {
-		c.FotoSelfie, err = utils.Encrypt(c.FotoKTP, secret)
-		if err != nil {
-			log.Errorf("error when hash password ")
+			log.Errorf("error when encrypt nik ")
 			return err
 		}
 		return err

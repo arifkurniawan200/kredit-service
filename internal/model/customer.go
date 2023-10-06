@@ -1,7 +1,6 @@
 package models
 
 import (
-	"github.com/go-sql-driver/mysql"
 	"time"
 )
 
@@ -38,21 +37,21 @@ type LimitInformation struct {
 
 // Customer adalah model struct untuk tabel customer
 type Customer struct {
-	ID         int            `json:"id" db:"id"`
-	NIK        string         `json:"NIK" db:"NIK"`
-	FullName   string         `json:"full_name" db:"full_name"`
-	LegalName  string         `json:"legal_name,omitempty" db:"legal_name"`
-	BornPlace  string         `json:"born_place,omitempty" db:"born_place"`
-	BornDate   mysql.NullTime `json:"born_date,omitempty" db:"born_date"`
-	Salary     float64        `json:"salary,omitempty" db:"salary"`
-	Email      string         `json:"email" db:"email"`
-	IsAdmin    bool           `json:"is_admin,omitempty" db:"is_admin"`
-	Password   string         `json:"password" db:"password"`
-	FotoSelfie string         `json:"foto_selfie,omitempty" db:"foto_selfie"`
-	FotoKTP    string         `json:"foto_ktp,omitempty" db:"foto_ktp"`
-	CreatedAt  mysql.NullTime `json:"created_at" db:"created_at"`
-	UpdatedAt  mysql.NullTime `json:"updated_at" db:"updated_at"`
-	DeletedAt  *time.Time     `json:"deleted_at,omitempty" db:"deleted_at"`
+	ID         int        `json:"id" db:"id"`
+	NIK        string     `json:"NIK" db:"NIK"`
+	FullName   string     `json:"full_name" db:"full_name"`
+	LegalName  string     `json:"legal_name,omitempty" db:"legal_name"`
+	BornPlace  string     `json:"born_place,omitempty" db:"born_place"`
+	BornDate   time.Time  `json:"born_date,omitempty" db:"born_date"`
+	Salary     float64    `json:"salary,omitempty" db:"salary"`
+	Email      string     `json:"email" db:"email"`
+	IsAdmin    bool       `json:"is_admin,omitempty" db:"is_admin"`
+	Password   string     `json:"password" db:"password"`
+	FotoSelfie string     `json:"foto_selfie,omitempty" db:"foto_selfie"`
+	FotoKTP    string     `json:"foto_ktp,omitempty" db:"foto_ktp"`
+	CreatedAt  time.Time  `json:"created_at" db:"created_at"`
+	UpdatedAt  time.Time  `json:"updated_at" db:"updated_at"`
+	DeletedAt  *time.Time `json:"deleted_at,omitempty" db:"deleted_at"`
 }
 
 // CustomerParam adalah model struct untuk request
@@ -65,8 +64,8 @@ type CustomerParam struct {
 	Salary     float64   `json:"salary,omitempty" validate:"required"`
 	Email      string    `json:"email" validate:"required,email"`
 	Password   string    `json:"password" validate:"required"`
-	FotoSelfie string    `json:"foto_selfie,omitempty"`
-	FotoKTP    string    `json:"foto_ktp,omitempty"`
+	FotoSelfie string    `json:"-"`
+	FotoKTP    string    `json:"-"`
 }
 
 // LoanPayment adalah model struct untuk tabel loan_payment

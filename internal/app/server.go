@@ -64,6 +64,7 @@ func Run(u usecase.UserUcase, t usecase.TransactionUcase) {
 		customer.POST("/buy", h.CreateTransaction)
 		customer.GET("/schedule-payment", h.SchedulePayment)
 		customer.PUT("/pay-bill", h.PayTransaction)
+		customer.GET("/me", h.GetCostumerProfile)
 	}
 	admin := e.Group("/admin")
 	{

@@ -3,6 +3,7 @@ package app
 import (
 	"errors"
 	models "kredit-service/internal/model"
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -15,6 +16,11 @@ import (
 // MockUserUsecase is a mock implementation of the user usecase.
 type MockUserUsecase struct {
 	mock.Mock
+}
+
+func (m *MockUserUsecase) UploadIdentity(ktp *multipart.FileHeader, selfie *multipart.FileHeader, user_id int) error {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (m *MockUserUsecase) RegisterCustomer(ctx echo.Context, customer models.CustomerParam) error {

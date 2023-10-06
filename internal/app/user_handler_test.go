@@ -2,6 +2,7 @@ package app
 
 import (
 	models "kredit-service/internal/model"
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -13,6 +14,11 @@ import (
 
 // Define a mock UserUcase and TransactionUcase for testing
 type mockUserUcase struct{}
+
+func (u *mockUserUcase) UploadIdentity(ktp *multipart.FileHeader, selfie *multipart.FileHeader, user_id int) error {
+	//TODO implement me
+	panic("implement me")
+}
 
 func (u *mockUserUcase) GetUserLimit(ctx echo.Context, userID int) (models.LimitInformation, error) {
 	//TODO implement me
@@ -31,7 +37,17 @@ func (u *mockUserUcase) BulkApproveLoanRequest(ctx echo.Context, ids []int) (res
 
 type mockTransactionUcase struct{}
 
-func (u *mockTransactionUcase) GetTenorList() ([]models.Tenor, error) {
+func (u *mockTransactionUcase) GetTenorList(ctx echo.Context, email string) ([]models.Tenor, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (u *mockTransactionUcase) GetUserSchedulePayment(ctx echo.Context, userID int) ([]models.MonthPayments, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (u *mockTransactionUcase) PayTransaction(ctx echo.Context, param models.PaymentParam) error {
 	//TODO implement me
 	panic("implement me")
 }

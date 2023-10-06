@@ -57,7 +57,7 @@ func Run(u usecase.UserUcase, t usecase.TransactionUcase) {
 
 	customer := e.Group("/customer")
 	{
-		customer.Use(JWTMiddleware("secret"))
+		customer.Use(JWTMiddleware("secret")) // still default,can change anytime (i suggest i should placed in  .env)
 		customer.GET("/tenor", h.TenorList)
 		customer.GET("/limit", h.UserLimit)
 		customer.POST("/request-loan", h.RequestLoan)
@@ -65,11 +65,12 @@ func Run(u usecase.UserUcase, t usecase.TransactionUcase) {
 		customer.GET("/schedule-payment", h.SchedulePayment)
 		customer.PUT("/pay-bill", h.PayTransaction)
 		customer.GET("/me", h.GetCostumerProfile)
+		customer.PUT("/upload", h.UploadKTPandSelfie)
 	}
 	admin := e.Group("/admin")
 	{
-		admin.Use(JWTMiddleware("secret"))
-		//admin.Use(AdminMiddleware)
+		admin.Use(JWTMiddleware("secret")) // still default,can change anytime (i suggest i should placed in  .env)
+		admin.Use(AdminMiddleware)
 		admin.PUT("/approve-loan", h.BulkApproveLoanRequest)
 		admin.GET("/list-loan", h.ListCostumerLoan)
 	}

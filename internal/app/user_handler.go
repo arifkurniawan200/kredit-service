@@ -40,6 +40,71 @@ func (u handler) RegisterUser(c echo.Context) error {
 	})
 }
 
+func (u handler) UploadKTPandSelfie(c echo.Context) error {
+	// Validasi jenis file
+	validImageTypes := map[string]bool{
+		"image/jpeg": true,
+		"image/jpg":  true,
+		"image/png":  true,
+	}
+	claims, ok := c.Get("claims").(jwt.MapClaims)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
+			"message": "Invalid or missing claims",
+		})
+	}
+
+	userID, ok := claims["id"].(float64)
+	if !ok {
+		return c.JSON(http.StatusInternalServerError, ResponseFailed{
+			Messages: "failed to get user id",
+		})
+	}
+
+	ktp, err := c.FormFile("ktp")
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, ResponseFailed{
+			Messages: "Gagal mendapatkan file ktp",
+			Error:    "Foto ktp gagal dibaca",
+		})
+	}
+
+	ktpType := ktp.Header.Get("Content-Type")
+	if !validImageTypes[ktpType] {
+		return c.JSON(http.StatusBadRequest, ResponseFailed{
+			Messages: "Gagal mengunggah file ktp",
+			Error:    "Jenis file yang diunggah tidak diizinkan. Hanya file JPG atau PNG yang diizinkan.",
+		})
+	}
+
+	selfie, err := c.FormFile("selfie")
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, ResponseFailed{
+			Messages: "Gagal mendapatkan file selfie",
+			Error:    "Foto Selfie gagal dibaca",
+		})
+	}
+
+	selfieType := selfie.Header.Get("Content-Type")
+	if !validImageTypes[selfieType] {
+		return c.JSON(http.StatusBadRequest, ResponseFailed{
+			Messages: "Gagal mengunggah file selfie",
+			Error:    "Jenis file yang diunggah tidak diizinkan. Hanya file JPG atau PNG yang diizinkan.",
+		})
+	}
+	err = u.User.UploadIdentity(ktp, selfie, int(userID))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, ResponseFailed{
+			Messages: "gagal melakukan perubahan",
+			Error:    err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, ResponseSuccess{
+		Messages: "success upload image",
+	})
+}
+
 func (u handler) LoginUser(c echo.Context) error {
 	email := c.FormValue("email")
 	password := c.FormValue("password")

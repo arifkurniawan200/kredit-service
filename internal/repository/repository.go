@@ -15,6 +15,7 @@ type UserRepository interface {
 	CustomerLoanRequestByIds(ids []int, status string) ([]models.CustomerLoan, error)
 	UpdateLoanRequest(loan models.CustomerLoan) error
 	UpdateLoanRequestTx(tx *sql.Tx, loan models.CustomerLoan) error
+	UpdateIdentityUser(id int, ktp string, selfie string) error
 }
 
 type TransactionRepository interface {

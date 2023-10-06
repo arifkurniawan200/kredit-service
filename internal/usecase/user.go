@@ -5,10 +5,14 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"golang.org/x/sync/errgroup"
+	"io"
 	"kredit-service/internal/consts"
 	models "kredit-service/internal/model"
 	"kredit-service/internal/repository"
 	"kredit-service/internal/utils"
+	"mime/multipart"
+	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -53,6 +57,88 @@ func (u UserHandler) BulkApproveLoanRequest(ctx echo.Context, ids []int) (res []
 
 func (u UserHandler) ListRequestLoan(ctx echo.Context) ([]models.CustomerLoan, error) {
 	return u.u.CustomerLoanRequest(consts.LoanRequestStatusRequested)
+}
+
+func (u UserHandler) UploadIdentity(ktp *multipart.FileHeader, selfie *multipart.FileHeader, userID int) error {
+	var (
+		err           error
+		g             errgroup.Group
+		uploadDir     = "./storage"
+		encryptKTP    string
+		encryptSelfie string
+	)
+
+	g.Go(func() error {
+		src, err := ktp.Open()
+		if err != nil {
+			return err
+		}
+		defer src.Close()
+
+		if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
+			os.Mkdir(uploadDir, os.ModePerm)
+		}
+
+		dstPath := filepath.Join(uploadDir, ktp.Filename)
+
+		dst, err := os.Create(dstPath)
+		if err != nil {
+			return err
+		}
+		defer dst.Close()
+
+		if _, err = io.Copy(dst, src); err != nil {
+			return err
+		}
+
+		encryptKTP, err = utils.Encrypt(ktp.Filename, secret)
+		if err != nil {
+			log.Errorf("error when encrypt ktp ")
+			return err
+		}
+		return err
+	})
+
+	g.Go(func() error {
+		src, err := selfie.Open()
+		if err != nil {
+			return err
+		}
+		defer src.Close()
+
+		if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
+			os.Mkdir(uploadDir, os.ModePerm)
+		}
+
+		dstPath := filepath.Join(uploadDir, selfie.Filename)
+
+		dst, err := os.Create(dstPath)
+		if err != nil {
+			return err
+		}
+		defer dst.Close()
+
+		if _, err = io.Copy(dst, src); err != nil {
+			return err
+		}
+		encryptSelfie, err = utils.Encrypt(selfie.Filename, secret)
+		if err != nil {
+			log.Errorf("error when encrypt selfie ")
+			return err
+		}
+		return err
+	})
+
+	if err = g.Wait(); err != nil {
+		return err
+	}
+
+	err = u.u.UpdateIdentityUser(userID, encryptKTP, encryptSelfie)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (u UserHandler) RequestLoan(ctx echo.Context, loan models.LoanRequestParam) error {

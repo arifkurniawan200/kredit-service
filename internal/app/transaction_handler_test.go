@@ -14,12 +14,22 @@ import (
 type MockTransactionUsecase struct {
 }
 
+func (m *MockTransactionUsecase) GetUserSchedulePayment(ctx echo.Context, userID int) ([]models.MonthPayments, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m *MockTransactionUsecase) PayTransaction(ctx echo.Context, param models.PaymentParam) error {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (m *MockTransactionUsecase) CreateTransaction(ctx echo.Context, transaction models.TransactionParam) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (m *MockTransactionUsecase) GetTenorList() ([]models.Tenor, error) {
+func (m *MockTransactionUsecase) GetTenorList(ctx echo.Context, email string) ([]models.Tenor, error) {
 	// Simulate the behavior of the transaction usecase.
 	// Return the appropriate data or error based on your test case.
 	// For example:

@@ -138,6 +138,14 @@ func (h UserHandler) RequestLoan(cl models.CustomerLoan) error {
 	return err
 }
 
+func (h UserHandler) UpdateIdentityUser(id int, ktp string, selfie string) error {
+	_, err := h.db.Exec(queryUpdateIdentity, ktp, selfie, id)
+	if err != nil {
+		return err
+	}
+	return err
+}
+
 func (h UserHandler) RegisterUser(c models.CustomerParam) error {
 	_, err := h.db.Exec(insertNewCostumer, c.NIK, c.FullName, c.LegalName, c.BornPlace, c.BornDate, c.Salary, false, c.Email, c.Password, c.FotoSelfie, c.FotoKTP)
 	if err != nil {

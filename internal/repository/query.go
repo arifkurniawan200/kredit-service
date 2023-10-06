@@ -133,4 +133,11 @@ const (
 			UPDATE schedule_payment
 			SET status = ?, payment_date = ?
 			WHERE id = ?;`
+
+	queryUpdateIdentity = `UPDATE customer
+							SET
+								foto_ktp = ?,
+								foto_selfie = ?
+							WHERE
+								id = ?;`
 )

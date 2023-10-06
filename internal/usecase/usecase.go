@@ -15,7 +15,7 @@ type UserUcase interface {
 }
 
 type TransactionUcase interface {
-	GetTenorList() ([]models.Tenor, error)
+	GetTenorList(ctx echo.Context, email string) ([]models.Tenor, error)
 	CreateTransaction(ctx echo.Context, transaction models.TransactionParam) error
 	GetUserSchedulePayment(ctx echo.Context, userID int) ([]models.MonthPayments, error)
 	PayTransaction(ctx echo.Context, param models.PaymentParam) error

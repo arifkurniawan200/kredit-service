@@ -20,14 +20,34 @@ func NewTransactionsUsecase(t repository.TransactionRepository, u repository.Use
 	return &TransactionHandler{t, u}
 }
 
-func (t TransactionHandler) GetTenorList() ([]models.Tenor, error) {
-	return t.t.GetTenorList()
+func (t TransactionHandler) GetTenorList(ctx echo.Context, email string) ([]models.Tenor, error) {
+	tenors, err := t.t.GetTenorList()
+	if err != nil {
+		log.Errorf("[usecase][GetTenorList] error when get GetTenorList: %s", err.Error())
+		return nil, err
+	}
+
+	user, err := t.u.GetUserByEmail(email)
+	if err != nil {
+		log.Errorf("[usecase][GetTenorList] error when GetUserByEmail: %s", err.Error())
+		return nil, err
+	}
+
+	var res []models.Tenor
+
+	for _, tenor := range tenors {
+		amount := tenor.Value * user.Salary
+		tenor.PossibleLimit = &amount
+		res = append(res, tenor)
+	}
+
+	return res, err
 }
 
 func (t TransactionHandler) GetUserSchedulePayment(ctx echo.Context, userID int) ([]models.MonthPayments, error) {
 	monthPayments, err := t.t.SchedulePayment(userID)
 	if err != nil {
-		log.Errorf("[usecase][GetUserSchedulePayment] error when get schedule payment: %s", err.Error())
+		log.Errorf("[usecase][GetUserSchedulePayment] error when get SchedulePayment: %s", err.Error())
 		return nil, err
 	}
 

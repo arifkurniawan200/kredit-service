@@ -99,4 +99,38 @@ const (
 
 	queryCreateSchedulePayment = `INSERT INTO schedule_payment (transaction_id, amount, status, due_date)
 								VALUES(?,?,?,?)`
+	queryGetListTransaction = `
+						SELECT
+							DATE_FORMAT(due_date , '%Y-%m') AS month,
+							JSON_ARRAYAGG(
+								JSON_OBJECT(
+									'id', id,
+									'transaction_id', transaction_id,
+									'payment_date', payment_date,
+									'amount', amount,
+									'status', status,
+									'due_date', due_date,
+									'late_fee', late_fee
+								)
+							) AS payments
+						FROM schedule_payment
+						WHERE transaction_id IN (
+							SELECT id
+							FROM transaction
+							WHERE customer_id = ?
+						)
+						GROUP BY month
+						ORDER BY month;
+`
+	queryGetSchedulePayment = `
+			SELECT sp.*
+			FROM schedule_payment sp
+			JOIN transaction t ON sp.transaction_id = t.id
+			WHERE t.customer_id = ? 
+				AND DATE_FORMAT(sp.due_date, '%Y-%m') = ? AND sp.status != 'Paid';`
+
+	queryUpdateSchedulePayment = `
+			UPDATE schedule_payment
+			SET status = ?, payment_date = ?
+			WHERE id = ?;`
 )

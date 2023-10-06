@@ -6,6 +6,7 @@ import (
 	"kredit-service/internal/consts"
 	models "kredit-service/internal/model"
 	"kredit-service/internal/repository"
+	"math"
 	"time"
 )
 
@@ -20,6 +21,79 @@ func NewTransactionsUsecase(t repository.TransactionRepository, u repository.Use
 
 func (t TransactionHandler) GetTenorList() ([]models.Tenor, error) {
 	return t.t.GetTenorList()
+}
+
+func (t TransactionHandler) GetUserSchedulePayment(ctx echo.Context, userID int) ([]models.MonthPayments, error) {
+	monthPayments, err := t.t.SchedulePayment(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	var res []models.MonthPayments
+
+	for _, mp := range monthPayments {
+		var total float64
+		for _, p := range mp.Payments {
+			total += p.Amount
+		}
+
+		res = append(res, models.MonthPayments{
+			BillAmount: math.Round(total),
+			Month:      mp.Month,
+			Payments:   mp.Payments,
+		})
+	}
+	return res, err
+}
+
+func (t TransactionHandler) PayTransaction(ctx echo.Context, param models.PaymentParam) error {
+	_, err := time.Parse("2006-01", param.Date)
+	if err != nil {
+		return fmt.Errorf("invalid date format, format should be YYYY-MM")
+	}
+
+	sch, err := t.t.SchedulePaymentByDate(param.UserID, param.Date)
+	if err != nil {
+		return err
+	}
+
+	if len(sch) == 0 {
+		return fmt.Errorf("you dont have bill on that month")
+	}
+
+	var total float64
+	var ids []int
+
+	for _, s := range sch {
+		total += s.Amount
+		ids = append(ids, s.ID)
+	}
+
+	if math.Round(total) != param.Amount {
+		return fmt.Errorf("amount payment should equal with bill amount")
+	}
+
+	tx, err := t.u.BeginTx()
+	if err != nil {
+		return err
+	}
+	for _, id := range ids {
+		err = t.t.UpdateSchedulePaymentTx(tx, models.SchedulePayment{
+			Status:      consts.ScheduleStatusPaid,
+			PaymentDate: time.Now(),
+			ID:          id,
+		})
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (t TransactionHandler) CreateTransaction(ctx echo.Context, trx models.TransactionParam) error {

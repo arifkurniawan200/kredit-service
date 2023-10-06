@@ -49,3 +49,25 @@ type SchedulePayment struct {
 	UpdatedAt     time.Time  `json:"updated_at"`
 	DeletedAt     *time.Time `json:"deleted_at,omitempty"`
 }
+
+type Payment struct {
+	ID            int     `json:"id"`
+	TransactionID int     `json:"transaction_id"`
+	PaymentDate   string  `json:"payment_date"`
+	Amount        float64 `json:"amount"`
+	Status        string  `json:"status"`
+	DueDate       string  `json:"due_date"`
+	LateFee       float64 `json:"late_fee"`
+}
+
+type MonthPayments struct {
+	BillAmount float64   `json:"bill_amount"`
+	Month      string    `json:"month"`
+	Payments   []Payment `json:"payments"`
+}
+
+type PaymentParam struct {
+	Date   string  `json:"date" validate:"required"`
+	Amount float64 `json:"amount" validate:"required"`
+	UserID int     `json:"-"`
+}

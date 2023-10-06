@@ -23,4 +23,7 @@ type TransactionRepository interface {
 	GetTenorByID(id int) (models.Tenor, error)
 	CreateTransactionTx(tx *sql.Tx, data models.TransactionParam) (int, error)
 	CreateSchedulePaymentTx(tx *sql.Tx, data models.SchedulePayment) error
+	SchedulePayment(userID int) ([]models.MonthPayments, error)
+	SchedulePaymentByDate(userID int, date string) ([]models.SchedulePayment, error)
+	UpdateSchedulePaymentTx(tx *sql.Tx, data models.SchedulePayment) error
 }

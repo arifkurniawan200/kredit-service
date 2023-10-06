@@ -71,8 +71,8 @@ running api server
   GET /login
   
   param :
-  username: admin
-  password: admin
+  email: admin@example.com
+  password: secure_password
 ```
 
 #### register user

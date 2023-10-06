@@ -9,6 +9,10 @@ type TransactionHandler struct {
 	db *sql.DB
 }
 
+func NewTransactionRepository(db *sql.DB) TransactionRepository {
+	return &TransactionHandler{db}
+}
+
 func (h TransactionHandler) CreateSchedulePaymentTx(tx *sql.Tx, data models.SchedulePayment) error {
 	_, err := tx.Exec(queryCreateSchedulePayment, data.TransactionID, data.Amount, data.Status, data.DueDate)
 	if err != nil {
@@ -53,10 +57,6 @@ func (h TransactionHandler) GetTenorByID(id int) (models.Tenor, error) {
 		return data, err
 	}
 	return data, err
-}
-
-func NewTransactionRepository(db *sql.DB) TransactionRepository {
-	return &TransactionHandler{db}
 }
 
 func (h TransactionHandler) GetUserTransactionByUserID(userID int) ([]models.Transaction, error) {

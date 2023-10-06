@@ -12,6 +12,10 @@ type UserHandler struct {
 	db *sql.DB
 }
 
+func NewUserRepository(db *sql.DB) UserRepository {
+	return &UserHandler{db}
+}
+
 func (h UserHandler) UpdateLoanRequest(loan models.CustomerLoan) error {
 	_, err := h.db.Exec(queryApproveLoanRequest, loan.Status, loan.ApprovedDate, loan.ExpiredAt, loan.ID)
 	if err != nil {
@@ -72,9 +76,6 @@ func (h UserHandler) CustomerLoanRequestByIds(ids []int, status string) ([]model
 		return datas, err
 	}
 	return datas, err
-}
-func NewUserRepository(db *sql.DB) UserRepository {
-	return &UserHandler{db}
 }
 
 func (h UserHandler) BeginTx() (*sql.Tx, error) {

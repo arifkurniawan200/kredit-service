@@ -17,6 +17,14 @@ type UserHandler struct {
 	t repository.TransactionRepository
 }
 
+const (
+	secret = "abc&1*~#^2^#s0^=)^^7%b34"
+)
+
+func NewUserUsecase(u repository.UserRepository, t repository.TransactionRepository) UserUcase {
+	return &UserHandler{u, t}
+}
+
 func (u UserHandler) BulkApproveLoanRequest(ctx echo.Context, ids []int) (res []int, err error) {
 	var (
 		success []int
@@ -82,17 +90,9 @@ func (u UserHandler) GetUserLimit(ctx echo.Context, userID int) (models.LimitInf
 	return LoanToLimitInfo(limit), nil
 }
 
-func NewUserUsecase(u repository.UserRepository, t repository.TransactionRepository) UserUcase {
-	return &UserHandler{u, t}
-}
-
 func (u UserHandler) GetUserInfoByEmail(ctx echo.Context, email string) (models.Customer, error) {
 	return u.u.GetUserByEmail(email)
 }
-
-const (
-	secret = "abc&1*~#^2^#s0^=)^^7%b34"
-)
 
 func (u UserHandler) RegisterCustomer(ctx echo.Context, c models.CustomerParam) error {
 	var (

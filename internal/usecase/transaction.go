@@ -14,6 +14,14 @@ type TransactionHandler struct {
 	u repository.UserRepository
 }
 
+func NewTransactionsUsecase(t repository.TransactionRepository, u repository.UserRepository) TransactionUcase {
+	return &TransactionHandler{t, u}
+}
+
+func (t TransactionHandler) GetTenorList() ([]models.Tenor, error) {
+	return t.t.GetTenorList()
+}
+
 func (t TransactionHandler) CreateTransaction(ctx echo.Context, trx models.TransactionParam) error {
 	limit, err := t.u.GetUserLimit(trx.UserID)
 	if err != nil {
@@ -88,12 +96,4 @@ func (t TransactionHandler) CreateTransaction(ctx echo.Context, trx models.Trans
 	}
 	return err
 
-}
-
-func (t TransactionHandler) GetTenorList() ([]models.Tenor, error) {
-	return t.t.GetTenorList()
-}
-
-func NewTransactionsUsecase(t repository.TransactionRepository, u repository.UserRepository) TransactionUcase {
-	return &TransactionHandler{t, u}
 }

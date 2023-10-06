@@ -61,6 +61,11 @@ func (t TransactionHandler) PayTransaction(ctx echo.Context, param models.Paymen
 		return fmt.Errorf("you dont have bill on that month")
 	}
 
+	limit, err := t.u.GetUserLimit(param.UserID)
+	if err != nil {
+		return err
+	}
+
 	var total float64
 	var ids []int
 
@@ -88,6 +93,17 @@ func (t TransactionHandler) PayTransaction(ctx echo.Context, param models.Paymen
 			return err
 		}
 	}
+
+	err = t.u.UpdateLoanRequestTx(tx, models.CustomerLoan{
+		ID:         limit.ID,
+		UsedAmount: limit.UsedAmount - param.Amount,
+		Status:     consts.LoanRequestStatusUsed,
+	})
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
 	err = tx.Commit()
 	if err != nil {
 		return err

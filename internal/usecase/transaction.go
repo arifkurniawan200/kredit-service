@@ -24,6 +24,8 @@ func (t TransactionHandler) CreateTransaction(ctx echo.Context, trx models.Trans
 		return fmt.Errorf("you don't have a loan limit yet. Please apply for a loan")
 	}
 
+	trx.GenerateContractNumber()
+
 	switch limit.Status {
 	case consts.LoanRequestStatusExpired:
 		err = fmt.Errorf("your limit already expired, please contact admin")
@@ -40,6 +42,8 @@ func (t TransactionHandler) CreateTransaction(ctx echo.Context, trx models.Trans
 		return fmt.Errorf("available amount not enough to doing transaction")
 	}
 
+	amountWithInterest := trx.OTR + trx.AdminFee + (trx.Interest * trx.OTR)
+	amountInstallment := amountWithInterest / float64(trx.TotalInstallment)
 	trx.Status = consts.TransactionStatusSuccess
 
 	//start operation using database transaction
@@ -49,24 +53,20 @@ func (t TransactionHandler) CreateTransaction(ctx echo.Context, trx models.Trans
 	}
 
 	err = t.u.UpdateLoanRequestTx(tx, models.CustomerLoan{
-		CustomerID: trx.UserID,
-		UsedAmount: limit.UsedAmount + trx.OTR,
+		ID:         limit.ID,
+		UsedAmount: limit.UsedAmount + amountWithInterest,
 		Status:     consts.LoanRequestStatusUsed,
 	})
 	if err != nil {
-		fmt.Println("masuk 1")
 		tx.Rollback()
 		return err
 	}
 
 	id, err := t.t.CreateTransactionTx(tx, trx)
 	if err != nil {
-		fmt.Println("masuk 2")
 		tx.Rollback()
 		return err
 	}
-
-	amountInstallment := (trx.OTR + trx.AdminFee + (trx.Interest * trx.OTR)) / float64(trx.TotalInstallment)
 
 	for i := 1; i <= trx.TotalInstallment; i++ {
 		now := time.Now()

@@ -3,6 +3,7 @@ package usecase
 import (
 	"fmt"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 	"kredit-service/internal/consts"
 	models "kredit-service/internal/model"
 	"kredit-service/internal/repository"
@@ -26,6 +27,7 @@ func (t TransactionHandler) GetTenorList() ([]models.Tenor, error) {
 func (t TransactionHandler) GetUserSchedulePayment(ctx echo.Context, userID int) ([]models.MonthPayments, error) {
 	monthPayments, err := t.t.SchedulePayment(userID)
 	if err != nil {
+		log.Errorf("[usecase][GetUserSchedulePayment] error when get schedule payment: %s", err.Error())
 		return nil, err
 	}
 
@@ -49,11 +51,13 @@ func (t TransactionHandler) GetUserSchedulePayment(ctx echo.Context, userID int)
 func (t TransactionHandler) PayTransaction(ctx echo.Context, param models.PaymentParam) error {
 	_, err := time.Parse("2006-01", param.Date)
 	if err != nil {
+		log.Errorf("[usecase][PayTransaction] error when parsing param date: %s", err.Error())
 		return fmt.Errorf("invalid date format, format should be YYYY-MM")
 	}
 
 	sch, err := t.t.SchedulePaymentByDate(param.UserID, param.Date)
 	if err != nil {
+		log.Errorf("[usecase][PayTransaction] error when SchedulePaymentByDate: %s", err.Error())
 		return err
 	}
 
@@ -63,6 +67,7 @@ func (t TransactionHandler) PayTransaction(ctx echo.Context, param models.Paymen
 
 	limit, err := t.u.GetUserLimit(param.UserID)
 	if err != nil {
+		log.Errorf("[usecase][PayTransaction] error when GetUserLimit: %s", err.Error())
 		return err
 	}
 
@@ -80,6 +85,7 @@ func (t TransactionHandler) PayTransaction(ctx echo.Context, param models.Paymen
 
 	tx, err := t.u.BeginTx()
 	if err != nil {
+		log.Errorf("[usecase][PayTransaction] error when BeginTx: %s", err.Error())
 		return err
 	}
 	for _, id := range ids {
@@ -100,12 +106,14 @@ func (t TransactionHandler) PayTransaction(ctx echo.Context, param models.Paymen
 		Status:     consts.LoanRequestStatusUsed,
 	})
 	if err != nil {
+		log.Errorf("[usecase][PayTransaction] error when UpdateLoanRequestTx: %s", err.Error())
 		tx.Rollback()
 		return err
 	}
 
 	err = tx.Commit()
 	if err != nil {
+		log.Errorf("[usecase][PayTransaction] error when Commit: %s", err.Error())
 		return err
 	}
 
@@ -115,6 +123,7 @@ func (t TransactionHandler) PayTransaction(ctx echo.Context, param models.Paymen
 func (t TransactionHandler) CreateTransaction(ctx echo.Context, trx models.TransactionParam) error {
 	limit, err := t.u.GetUserLimit(trx.UserID)
 	if err != nil {
+		log.Errorf("[usecase][CreateTransaction] error when GetUserLimit: %s", err.Error())
 		return err
 	}
 
@@ -156,12 +165,14 @@ func (t TransactionHandler) CreateTransaction(ctx echo.Context, trx models.Trans
 		Status:     consts.LoanRequestStatusUsed,
 	})
 	if err != nil {
+		log.Errorf("[usecase][CreateTransaction] error when UpdateLoanRequestTx: %s", err.Error())
 		tx.Rollback()
 		return err
 	}
 
 	id, err := t.t.CreateTransactionTx(tx, trx)
 	if err != nil {
+		log.Errorf("[usecase][CreateTransaction] error when CreateTransactionTx: %s", err.Error())
 		tx.Rollback()
 		return err
 	}
@@ -182,6 +193,7 @@ func (t TransactionHandler) CreateTransaction(ctx echo.Context, trx models.Trans
 
 	err = tx.Commit()
 	if err != nil {
+		log.Errorf("[usecase][CreateTransaction] error when Commit: %s", err.Error())
 		return err
 	}
 	return err

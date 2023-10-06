@@ -31,6 +31,7 @@ func (u UserHandler) BulkApproveLoanRequest(ctx echo.Context, ids []int) (res []
 	)
 	datas, err := u.u.CustomerLoanRequestByIds(ids, consts.LoanRequestStatusRequested)
 	if err != nil {
+		log.Errorf("[usecase][BulkApproveLoanRequest] error when CustomerLoanRequestByIds: %s", err.Error())
 		return nil, err
 	}
 	for _, d := range datas {
@@ -58,11 +59,13 @@ func (u UserHandler) RequestLoan(ctx echo.Context, loan models.LoanRequestParam)
 	now := time.Now()
 	tenor, err := u.t.GetTenorByID(loan.TenorID)
 	if err != nil {
+		log.Errorf("[usecase][RequestLoan] error when GetTenorByID: %s", err.Error())
 		return err
 	}
 
 	userInfo, err := u.u.GetUserByEmail(loan.Email)
 	if err != nil {
+		log.Errorf("[usecase][RequestLoan] error when GetUserByEmail: %s", err.Error())
 		return err
 	}
 
@@ -74,6 +77,7 @@ func (u UserHandler) RequestLoan(ctx echo.Context, loan models.LoanRequestParam)
 		Status:     consts.LoanRequestStatusRequested,
 	})
 	if err != nil {
+		log.Errorf("[usecase][RequestLoan] error when RequestLoan: %s", err.Error())
 		return err
 	}
 	return err
@@ -82,6 +86,7 @@ func (u UserHandler) RequestLoan(ctx echo.Context, loan models.LoanRequestParam)
 func (u UserHandler) GetUserLimit(ctx echo.Context, userID int) (models.LimitInformation, error) {
 	limit, err := u.u.GetUserLimit(userID)
 	if err != nil {
+		log.Errorf("[usecase][GetUserLimit] error when GetUserLimit: %s", err.Error())
 		return models.LimitInformation{}, err
 	}
 	if limit.ID == 0 {
@@ -144,6 +149,7 @@ func (u UserHandler) RegisterCustomer(ctx echo.Context, c models.CustomerParam) 
 
 	err = u.u.RegisterUser(c)
 	if err != nil {
+		log.Errorf("[usecase][RegisterCustomer] error when RegisterUser: %s", err.Error())
 		return err
 	}
 

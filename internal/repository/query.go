@@ -1,5 +1,6 @@
 package repository
 
+// USERS QUERY
 const (
 	insertNewCostumer  = `INSERT INTO customer(NIK, full_name, legal_name, born_place, born_date, salary, is_admin, email, password, foto_selfie, foto_ktp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 	getCostumerByEmail = `
@@ -24,8 +25,7 @@ const (
         WHERE
             email = ?
     `
-	getTenorList     = `SELECT id,tenor,value FROM tenor`
-	getTenorByID     = `SELECT id,tenor,value FROM tenor WHERE id = ?`
+
 	queryRequestLoan = `
 		INSERT INTO customer_loan (customer_id, tenor, loan_date, loan_amount, status)
 		VALUES (?, ?, ?, ?, ?)
@@ -88,6 +88,11 @@ const (
 			  used_amount = ?
 			WHERE
 			  id = ?`
+)
+
+const (
+	getTenorList = `SELECT id,tenor,value FROM tenor`
+	getTenorByID = `SELECT id,tenor,value FROM tenor WHERE id = ?`
 
 	queryCreateTransaction = `INSERT INTO transaction (customer_id, contract_number, OTR, admin_fee, total_installment, interest, asset_name, status)
 							VALUES (?, ?, ?, ?, ?, ?, ?, ?);`

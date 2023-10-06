@@ -21,7 +21,6 @@ func (h TransactionHandler) CreateSchedulePaymentTx(tx *sql.Tx, data models.Sche
 	return err
 }
 
-// customer_id, contract_number, OTR, admin_fee, total_installment, interest, asset_name, status
 func (h TransactionHandler) CreateTransactionTx(tx *sql.Tx, data models.TransactionParam) (int, error) {
 	result, err := tx.Exec(queryCreateTransaction, data.UserID, data.ContractNumber, data.OTR, data.AdminFee, data.TotalInstallment, data.Interest, data.AssetName, data.Status)
 	if err != nil {
@@ -45,14 +44,12 @@ func (h TransactionHandler) GetTenorByID(id int) (models.Tenor, error) {
 	}
 	defer rows.Close()
 
-	// Iterate hasil query
 	for rows.Next() {
 		if err = rows.Scan(&data.ID, &data.Tenor, &data.Value); err != nil {
 			return data, err
 		}
 	}
 
-	// Check for errors from iterating over rows
 	if err = rows.Err(); err != nil {
 		return data, err
 	}
@@ -75,7 +72,6 @@ func (h TransactionHandler) GetTenorList() ([]models.Tenor, error) {
 	}
 	defer rows.Close()
 
-	// Iterate hasil query
 	for rows.Next() {
 		var t models.Tenor
 		if err = rows.Scan(&t.ID, &t.Tenor, &t.Value); err != nil {
@@ -84,7 +80,6 @@ func (h TransactionHandler) GetTenorList() ([]models.Tenor, error) {
 		data = append(data, t)
 	}
 
-	// Check for errors from iterating over rows
 	if err = rows.Err(); err != nil {
 		return data, err
 	}

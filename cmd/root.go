@@ -26,26 +26,16 @@ func Start() {
 			},
 		},
 		{
-			Use:   "db:seeding",
-			Short: "database seeding",
-			Run: func(cmd *cobra.Command, args []string) {
-				//err := migration.SeedingData(cfg)
-				//if err != nil {
-				//	log.Fatal(err.Error())
-				//}
-			},
-		},
-		{
 			Use:   "api",
 			Short: "run api server",
 			Run: func(cmd *cobra.Command, args []string) {
-				db, err := db.NewDatabase(cfg.DB)
+				dbs, err := db.NewDatabase(cfg.DB)
 				if err != nil {
 					log.Fatal(err)
 				}
 
-				userRepo := repository.NewUserRepository(db)
-				transactionRepo := repository.NewTransactionRepository(db)
+				userRepo := repository.NewUserRepository(dbs)
+				transactionRepo := repository.NewTransactionRepository(dbs)
 				userUsecase := usecase.NewUserUsecase(userRepo, transactionRepo)
 				transactionUcase := usecase.NewTransactionsUsecase(transactionRepo, userRepo)
 				app.Run(userUsecase, transactionUcase)

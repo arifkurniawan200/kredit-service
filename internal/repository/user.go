@@ -62,7 +62,6 @@ func (h UserHandler) CustomerLoanRequestByIds(ids []int, status string) ([]model
 	}
 	defer rows.Close()
 
-	// Iterate hasil query
 	for rows.Next() {
 		var data models.CustomerLoan
 		if err = rows.Scan(&data.ID, &data.CustomerID, &data.Status, &data.UsedAmount, &data.LoanAmount, &data.Tenor, &data.CreatedAt, &data.UpdatedAt, &data.LoanDate); err != nil {
@@ -71,7 +70,6 @@ func (h UserHandler) CustomerLoanRequestByIds(ids []int, status string) ([]model
 		datas = append(datas, data)
 	}
 
-	// Check for errors from iterating over rows
 	if err = rows.Err(); err != nil {
 		return datas, err
 	}
@@ -95,7 +93,6 @@ func (h UserHandler) CustomerLoanRequest(status string) ([]models.CustomerLoan, 
 	}
 	defer rows.Close()
 
-	// Iterate hasil query
 	for rows.Next() {
 		var data models.CustomerLoan
 		if err = rows.Scan(&data.ID, &data.CustomerID, &data.Status, &data.UsedAmount, &data.LoanAmount, &data.Tenor, &data.CreatedAt, &data.UpdatedAt, &data.LoanDate); err != nil {
@@ -104,7 +101,6 @@ func (h UserHandler) CustomerLoanRequest(status string) ([]models.CustomerLoan, 
 		datas = append(datas, data)
 	}
 
-	// Check for errors from iterating over rows
 	if err = rows.Err(); err != nil {
 		return datas, err
 	}
@@ -122,14 +118,12 @@ func (h UserHandler) GetUserLimit(userID int) (models.CustomerLoan, error) {
 	}
 	defer rows.Close()
 
-	// Iterate hasil query
 	for rows.Next() {
 		if err = rows.Scan(&data.ID, &data.CustomerID, &data.Status, &data.UsedAmount, &data.LoanAmount, &data.Tenor, &data.ExpiredAt); err != nil {
 			return data, err
 		}
 	}
 
-	// Check for errors from iterating over rows
 	if err = rows.Err(); err != nil {
 		return data, err
 	}
@@ -163,7 +157,6 @@ func (h UserHandler) GetUserByEmail(email string) (models.Customer, error) {
 	}
 	defer rows.Close()
 
-	// Iterate hasil query
 	for rows.Next() {
 		if err = rows.Scan(&data.ID, &data.NIK, &data.FullName, &data.LegalName, &data.BornPlace, &data.BornDate, &data.Salary, &data.IsAdmin,
 			&data.Email, &data.Password, &data.FotoSelfie, &data.FotoKTP,
@@ -173,7 +166,6 @@ func (h UserHandler) GetUserByEmail(email string) (models.Customer, error) {
 		}
 	}
 
-	// Check for errors from iterating over rows
 	if err = rows.Err(); err != nil {
 		return data, err
 	}

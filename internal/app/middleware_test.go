@@ -18,7 +18,7 @@ func TestJWTMiddleware(t *testing.T) {
 	// Create an Echo instance
 	e := echo.New()
 
-	token := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG5kb2VAZXhhbXBsZS5jb20iLCJpc19hZG1pbiI6ZmFsc2UsImlkIjoxLCJleHAiOjE2OTY1MjQ0MTd9.Z_4zjV7jC3JJNE2TKb1mLGcWQBAC-h7G7ju3xElaAbg"
+	token := "<YOUR_TOKEN>"
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
 	rec := httptest.NewRecorder()

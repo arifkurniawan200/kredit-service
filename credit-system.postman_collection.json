@@ -62,7 +62,7 @@
 						"bearer": [
 							{
 								"key": "token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwiaXNfYWRtaW4iOnRydWUsImlkIjoxLCJleHAiOjE2OTY1ODI4Mzl9.atd1ORfk25mo5oWIZBqvlEeLXdQlyFOiWOA1UKjQuoQ",
+								"value": "<YOUR_TOKEN>",
 								"type": "string"
 							}
 						]
@@ -206,7 +206,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG5kb2VAZXhhbXBsZS5jb20iLCJpc19hZG1pbiI6ZmFsc2UsImlkIjoxLCJleHAiOjE2OTY0ODE2MjN9.T8LivwXipLXSDBJEzSHOt8NNpSPH7ra5dIZJ0tL2RUA",
+									"value": "<YOUR_TOKEN>",
 									"type": "string"
 								}
 							]
@@ -298,7 +298,7 @@
 				"bearer": [
 					{
 						"key": "token",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG5kb2VAZXhhbXBsZS5jb20iLCJpc19hZG1pbiI6ZmFsc2UsImlkIjoyLCJleHAiOjE2OTY1ODI4OTV9.oZPcA4FeFWzPWJ6z8uOhd5qemb9ZnMa0ZZqIwOvgZ2M",
+						"value": "<YOUR_TOKEN>",
 						"type": "string"
 					}
 				]
